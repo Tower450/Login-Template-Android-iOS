@@ -16,10 +16,15 @@ You need absolutely to have a MACOS device and xCode Compiler
 Then..
 
 1- You need to run "ionic build ios"
+
 2- Go to the build path : projectname/platform/ios/appname/projectname.xcodeproj
+
 3- Open the .xcodeprojet extension
+
 4- Play on xCode
 
 Be sure to have those installed:
+
 npm install ios-deploy -g
+
 npm install ios-sim  -g 
