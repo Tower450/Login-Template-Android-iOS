@@ -1,13 +1,43 @@
-<ion-view view-title="Account">
+<ion-view view-title="Account" ng-init="init()">
   <ion-nav-buttons side="left">
-    <button class="button-clear button-icon button ion-log-out button-assertive" ng-click="logout()">
+    <button class="button-clear button-icon button ion-log-out button-assertive">
     </button>
   </ion-nav-buttons>
   <ion-content>
+    <div class="list card">
+            <div class="item item-avatar">
+                <img ng-src="{{profileData.picture.data.url}}">
+                <h2>{{profileData.name}}</h2>
+                <p>{{profileData.id}}</p>
+            </div>
+            <a href="#" class="item item-icon-left">
+                <i class="icon ion-earth"></i>
+                {{profileData.website}}
+            </a>
+            <a href="#" class="item item-icon-left">
+                <i class="icon ion-home"></i>
+                {{profileData.location.name}}
+            </a>
+
+            <!--<a href="#" class="item item-icon-left">
+                <i class="icon ion-heart"></i>
+                {{profileData.relationship_status}}
+            </a> -->
+
+             <a ion-item href="" class="item item-icon-left" ng-click="logout()">
+                <i class="icon ion-log-out"></i>
+                Sign out
+            </a>
+        
+
+            <ion-toggle  ng-model="settings.enableFriends">
+                Enable Friends
+            </ion-toggle>
+
+    </div>
     <ion-list>
-    <ion-toggle ng-click="logout()" ng-model="settings.enableFriends">
-        Enable Friends
-    </ion-toggle>
+
+
     </ion-list>
   </ion-content>
 </ion-view>

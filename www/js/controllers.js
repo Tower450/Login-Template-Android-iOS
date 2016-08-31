@@ -1,8 +1,8 @@
-angular.module('starter.controllers', ['starter.services', 'ngOpenFB', 'ngCordova','ngCordovaOauth'])
+angular.module('starter.controllers', ['ngStorage','starter.services', 'ngOpenFB', 'ngCordova','ngCordovaOauth'])
   
 
  //page login
-  .controller("LoginCtrl", function($scope, $state, $cordovaOauth ,ngFB) {
+  .controller("LoginCtrl", function($scope, $state, $cordovaOauth,$localStorage ,ngFB) {
 
     $scope.login = function() {
 
@@ -16,11 +16,16 @@ angular.module('starter.controllers', ['starter.services', 'ngOpenFB', 'ngCordov
        //Log in with facebook API
 
         //Do not forget to put the good OAuth URL redirection
-        $cordovaOauth.facebook("1161624057237110", ["email"], {redirect_uri: "http://localhost/oauthcallback.html"}).then(function(result) {
+        $cordovaOauth.facebook("1161624057237110", ["email", "user_website", "user_location", "user_relationships"], {redirect_uri: "http://localhost/oauthcallback.html"}).then(function(result) {
             // results
             
             console.log(result);
+            $localStorage.accessToken = result.access_token;
+            console.log("voici le token: " + result.access_token);
+
             $state.go('tab.account');
+            //$state.go('profile');
+
 
         }, function(error) {
             // error
@@ -60,18 +65,60 @@ angular.module('starter.controllers', ['starter.services', 'ngOpenFB', 'ngCordov
 
   })
 
-  .controller('ProfileCtrl', function ($scope, ngFB) {
-    ngFB.api({
-        path: '/me',
-        params: {fields: 'id,name'}
-    }).then(
-    function (user) {
-            $scope.user = user;
-    },
-    function (error) {
-            alert('Facebook error: ' + error.error_description);
-    });
+  .controller('ProfileCtrl', function ($scope, $http, $localStorage, $state) {
+    
+        $scope.init = function() {
+
+         if($localStorage.hasOwnProperty("accessToken") === true) {
+              $http.get("https://graph.facebook.com/me", { params: { access_token: $localStorage.accessToken, fields: "id,name,gender,location,website,picture,relationship_status", format: "json" }}).then(function(result) {
+                  $scope.profileData = result.data;
+              }, function(error) {
+                  alert("There was a problem getting your profile.  Check the logs for details.");
+                  console.log(error);
+              });
+          } else {
+              alert("Not signed in");
+              $state.go("login");
+          }
+
+      }
+
+
  })
+
+
+  .controller('AccountCtrl', function($scope, $http, $localStorage, $state) {
+    
+    $scope.settings = {
+      enableFriends: true
+    };
+
+
+    $scope.init = function() {
+
+         if($localStorage.hasOwnProperty("accessToken") === true) {
+              $http.get("https://graph.facebook.com/v2.5/me", { params: { access_token: $localStorage.accessToken, fields: "id,name,gender,location,website,picture,relationship_status", format: "json" }}).then(function(result) {
+                  $scope.profileData = result.data;
+              }, function(error) {
+                  alert("There was a problem getting your profile.  Check the logs for details.");
+                  console.log(error);
+              });
+          } else {
+              alert("Not signed in");
+              $state.go("login");
+          }
+
+    };
+
+     $scope.logout = function() {
+        
+        $localStorage.accessToken = "";
+        $state.go("login");
+          
+    };
+  
+
+  })
 
 
 
@@ -98,22 +145,6 @@ angular.module('starter.controllers', ['starter.services', 'ngOpenFB', 'ngCordov
 
   .controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
     $scope.chat = Chats.get($stateParams.chatId);
-  })
-
-  .controller('AccountCtrl', function($scope,$state, ngFB) {
-    $scope.settings = {
-      enableFriends: true
-    };
-
-    $scope.logout = function() {
-      ngFB.logout().then(
-        function() {
-           alert('Logout successful');
-           $state.go('login');
-        }, errorHandler);
-      
-    };
   });
-
 
 
