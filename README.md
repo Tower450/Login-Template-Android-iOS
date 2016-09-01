@@ -4,6 +4,18 @@ It makes an easy cross plate-form UI for login and Facebook Login.
 
 I did all the architecture you need, you can customize this template and then run it without configuring the fblogin yourself.
 
+First of all, run "npm install"
+
+Then, add ios and android platform
+
+sudo ionic platform add android
+
+sudo ionic platform add ios
+
+Finally add the in apps browser plugin:
+
+cordova plugin add cordova-plugin-inappbrowser
+
 **RUNNING ON ANDROID DEVICE**
 
 Use the command line : ionic run android --device -l -s -c
